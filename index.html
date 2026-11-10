@@ -99,7 +99,7 @@ footer a{color:var(--info)}
   <header>
     <div class="eyebrow">Concept · step-by-step execution on iPad</div>
     <h1>The step was written against an older drawing</h1>
-    <p class="lede">A technician is switching a UPS to maintenance bypass, following an AI-written procedure on an iPad. At step 4 the site record shows the one-line drawing changed after the procedure was approved: the breaker was relabelled. This sketch shows how the screen stops them, shows exactly what changed, and lets them carry on safely or call the engineer. Tap through it.</p>
+    <p class="lede">A technician is switching a UPS to maintenance bypass, following an AI-written procedure on an iPad. At step 4, where this opens, the site record shows the one-line drawing changed after the procedure was approved: the breaker was relabelled. This sketch shows how the screen stops them, shows exactly what changed, and lets them carry on safely or call the engineer. Tap through it.</p>
   </header>
 
   <div class="grid">
@@ -188,7 +188,8 @@ footer a{color:var(--info)}
         {t:"Confirma que la carga de Hall 02 está en bypass y registra la lectura",w:"Cierra la secuencia de maniobra.",ref:"Pantalla PDU-B"}
       ]}
   };
-  var st={lang:"en",i:0,done:[],hold:"open",load:"62",ev:[]}, clock=[14,2];
+  function opened(lang){return {lang:lang,i:3,done:[0,1,2],hold:"open",load:"62",ev:[["14:05","Permit WP-2291 confirmed, second person: J. Ortiz"],["14:08","UPS-B on inverter, load 62%"],["14:11","Bypass source light on at UPS-B"]]}}
+  var st=opened("en"), clock=[14,11];
   var rail=document.getElementById("rail"), box=document.getElementById("step");
   function now(){clock[1]+=3; if(clock[1]>=60){clock[0]++;clock[1]-=60} return String(clock[0]).padStart(2,"0")+":"+String(clock[1]).padStart(2,"0")}
   function plain(s){return s.replace(/<[^>]+>/g,"")}
@@ -247,7 +248,7 @@ footer a{color:var(--info)}
     else if(b.dataset.see){st.hold="clear"; complete("Hold point: technician saw MBB-B on the panel (rev C). MBB-B closed")}
     else if(b.dataset.call){st.hold="called"; log("Hold point: technician stopped and called Priya Raman")}
     else if(b.dataset.approve){st.hold="clear"; complete("Priya Raman approved rev C label. MBB-B closed")}
-    else if(b.dataset.restart){st={lang:st.lang,i:0,done:[],hold:"open",load:"62",ev:[]}; clock=[14,2]}
+    else if(b.dataset.restart){st=opened(st.lang); clock=[14,11]}
     render();
   });
   render();
