@@ -7,87 +7,101 @@
 <title>Entangl Concept · Gaurav Basantani</title>
 <meta name="description" content="A procedure step on iPad that stops the technician when the drawing changed after the procedure was written. An unofficial concept by Gaurav Basantani.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
 <style>
-/* Layout: a tablet-sized field screen (step rail + current step) beside the reasoning; stacks on phones */
+/* Layout: the tablet screen is the page (steps | current step | record), three short labels under it, one proof strip. */
 :root{
-  --bg:#e9ecef; --frame:#1c2126; --screen:#f7f8f9; --surface:#ffffff; --ink:#111518; --muted:#56606a; --line:#d3d8dd;
-  --go:#1d6b46; --go-soft:#dcefe4; --hold:#a34a00; --hold-soft:#fdebd9; --hold-line:#e08a3c; --info:#2b5c8a; --info-soft:#e1ebf5;
-  --display:"Archivo",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --bg:#e8ebee; --frame:#1b2026; --screen:#f7f8f9; --surface:#ffffff; --ink:#10151a; --muted:#59636d; --line:#d5dade;
+  --go:#1d6b46; --go-ink:#ffffff; --go-soft:#dcefe4; --hold:#a34a00; --hold-soft:#fdebd9; --hold-line:#e08a3c; --info:#2b5c8a; --info-soft:#e1ebf5;
+  --sans:"Archivo",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0d1013; --frame:#000000; --screen:#151a1f; --surface:#1c2228; --ink:#e8ecef; --muted:#a2acb5; --line:#2e3740;
-  --go:#7fd3a4; --go-soft:#14301f; --hold:#ffb46e; --hold-soft:#3a240f; --hold-line:#c8742c; --info:#8fbbe6; --info-soft:#15263a; color-scheme:dark}}
+  --bg:#0c0f12; --frame:#000000; --screen:#141a1f; --surface:#1b2228; --ink:#e8ecef; --muted:#a2acb5; --line:#2d3740;
+  --go:#7fd3a4; --go-ink:#082015; --go-soft:#14301f; --hold:#ffb46e; --hold-soft:#38230e; --hold-line:#c8742c; --info:#8fbbe6; --info-soft:#15263a; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0d1013; --frame:#000000; --screen:#151a1f; --surface:#1c2228; --ink:#e8ecef; --muted:#a2acb5; --line:#2e3740;
-  --go:#7fd3a4; --go-soft:#14301f; --hold:#ffb46e; --hold-soft:#3a240f; --hold-line:#c8742c; --info:#8fbbe6; --info-soft:#15263a; color-scheme:dark}
+  --bg:#0c0f12; --frame:#000000; --screen:#141a1f; --surface:#1b2228; --ink:#e8ecef; --muted:#a2acb5; --line:#2d3740;
+  --go:#7fd3a4; --go-ink:#082015; --go-soft:#14301f; --hold:#ffb46e; --hold-soft:#38230e; --hold-line:#c8742c; --info:#8fbbe6; --info-soft:#15263a; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
-.wrap{max-width:1180px;margin:0 auto;display:grid;gap:28px}
-header{display:grid;gap:8px;max-width:780px}
-.eyebrow{font:600 .74rem/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--hold)}
-h1{font:800 clamp(2rem,4.4vw,3.1rem)/1.02 var(--display);letter-spacing:-.025em;margin:0;text-wrap:balance}
-h2{font:700 1.5rem/1.15 var(--display);margin:0;text-wrap:balance}
-h3{font:700 1rem/1.25 var(--display);margin:0}
-p{margin:0}
-.lede{color:var(--muted);max-width:66ch}
-.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:24px;align-items:start}
-@media(max-width:940px){.grid{grid-template-columns:1fr}}
-.tablet{background:var(--frame);border-radius:26px;padding:14px}
-.screen{background:var(--screen);border-radius:14px;overflow:hidden;display:grid;grid-template-rows:auto 1fr}
-.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);font:500 .78rem var(--mono);color:var(--muted)}
-.top b{color:var(--ink);font-weight:600}
-.lang{display:flex;gap:4px}
-.lang button{font:600 .72rem var(--mono);border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:6px;padding:4px 8px;cursor:pointer;min-height:30px}
-.lang button[aria-pressed="true"]{background:var(--ink);color:var(--screen);border-color:var(--ink)}
-.main{display:grid;grid-template-columns:210px minmax(0,1fr);min-height:520px}
-@media(max-width:620px){.main{grid-template-columns:1fr}.rail{display:none}}
-.rail{border-right:1px solid var(--line);padding:14px 10px;display:grid;gap:4px;align-content:start}
-.rail button{display:grid;grid-template-columns:26px minmax(0,1fr);gap:8px;align-items:start;text-align:left;font:500 .8rem/1.3 var(--body);background:transparent;border:0;border-radius:8px;padding:8px;color:var(--muted);cursor:pointer}
-.rail button[aria-current="step"]{background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
-.num{font:600 .72rem var(--mono);width:24px;height:24px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line)}
-.done .num{background:var(--go);border-color:var(--go);color:var(--screen)}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--sans);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:1100px;margin:0 auto;display:grid;gap:22px}
+p,h1,h2,h3{margin:0}
+.head{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap}
+.eyebrow{font:500 .72rem var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--hold)}
+h1{font:800 clamp(1.6rem,3.4vw,2.3rem)/1.08 var(--sans);letter-spacing:-.02em;margin-top:6px;text-wrap:balance}
+.sub{color:var(--muted);margin-top:6px;font-size:1rem}
+.by{font:500 .78rem var(--mono);color:var(--muted);text-align:right}
+.by a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+@media(max-width:600px){.by{text-align:left}}
+/* tablet */
+.tablet{background:var(--frame);border-radius:28px;padding:14px;box-shadow:0 18px 40px rgba(10,20,30,.16)}
+.screen{background:var(--screen);border-radius:15px;overflow:hidden}
+.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line)}
+.top .t{font:500 .8rem var(--mono);color:var(--muted)}.top b{color:var(--ink);font-weight:600}
+.lang{display:flex;gap:3px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:3px}
+.lang button{font:600 .72rem var(--mono);border:0;background:transparent;color:var(--muted);border-radius:5px;padding:4px 9px;cursor:pointer;min-height:28px}
+.lang button[aria-pressed="true"]{background:var(--ink);color:var(--screen)}
+.cols{display:grid;grid-template-columns:220px minmax(0,1fr) 250px;min-height:470px}
+@media(max-width:920px){.cols{grid-template-columns:200px minmax(0,1fr)}.rec{grid-column:1/-1;border-left:0!important;border-top:1px solid var(--line)}}
+@media(max-width:620px){.cols{grid-template-columns:1fr}.rail{display:none}}
+.rail{border-right:1px solid var(--line);padding:14px 10px;display:grid;gap:2px;align-content:start}
+.rail button{display:grid;grid-template-columns:24px minmax(0,1fr);gap:9px;align-items:center;text-align:left;font:500 .82rem/1.25 var(--sans);background:transparent;border:0;border-radius:9px;padding:8px;color:var(--muted);cursor:pointer}
+.rail button[aria-current="step"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:inset 0 0 0 1px var(--line)}
+.num{font:600 .7rem var(--mono);width:22px;height:22px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line)}
+.done .num{background:var(--go);border-color:var(--go);color:var(--go-ink)}
 .held .num{background:var(--hold);border-color:var(--hold);color:var(--screen)}
-.step{padding:20px;display:grid;gap:16px;align-content:start;min-width:0}
-.meta{display:flex;gap:8px;flex-wrap:wrap;font:500 .74rem var(--mono);color:var(--muted)}
-.tag{border:1px solid var(--line);border-radius:6px;padding:3px 7px;background:var(--surface)}
-.instr{font:700 clamp(1.25rem,2.4vw,1.7rem)/1.2 var(--display);letter-spacing:-.01em;text-wrap:balance}
-.equip{font-family:var(--mono);font-weight:600;background:var(--info-soft);color:var(--info);padding:0 6px;border-radius:5px;white-space:nowrap}
-.why{color:var(--muted);font-size:.92rem;max-width:62ch}
-.hold{border:2px solid var(--hold-line);background:var(--hold-soft);border-radius:12px;padding:16px;display:grid;gap:12px}
-.hold h3{color:var(--hold);font-size:1.05rem}
-.diff{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}
-.rev{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px;font:500 .82rem/1.4 var(--mono);min-width:0;overflow-wrap:anywhere}
-.rev small{display:block;color:var(--muted);font:500 .7rem var(--mono);margin-bottom:4px}
-.rev s{color:var(--muted)}
-.arrow{font:700 1.1rem var(--mono);color:var(--hold)}
+.step{padding:22px;display:grid;gap:14px;align-content:start;min-width:0}
+.meta{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font:500 .7rem var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:3px 7px;background:var(--surface)}
+.instr{font:700 clamp(1.3rem,2.3vw,1.7rem)/1.15 var(--sans);letter-spacing:-.01em;text-wrap:balance}
+.equip{font:600 .9em var(--mono);background:var(--info-soft);color:var(--info);padding:1px 7px;border-radius:6px;white-space:nowrap}
+.why{color:var(--muted);font-size:.9rem}
+.hold{border:2px solid var(--hold-line);background:var(--hold-soft);border-radius:14px;padding:16px;display:grid;gap:12px}
+.hold h3{font:800 1.2rem/1.15 var(--sans);color:var(--hold)}
+.hold p{font-size:.92rem}
+.diff{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch}
+.rev{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+.rev small{display:block;color:var(--muted);font:500 .66rem var(--mono);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.rev b,.rev s{font:600 1.25rem var(--mono)}.rev s{color:var(--muted);font-weight:500}
+.rev.new{border-color:var(--hold-line)}
+.arrow{font:700 1.1rem var(--mono);color:var(--hold);align-self:center}
 @media(max-width:480px){.diff{grid-template-columns:1fr}.arrow{transform:rotate(90deg);justify-self:center}}
 .choices{display:grid;gap:8px}
-.big{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;text-align:left;font:600 1rem var(--body);min-height:56px;padding:12px 16px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
-.big small{display:block;font:400 .8rem var(--body);color:var(--muted);margin-top:2px}
-.big.go{background:var(--go);border-color:var(--go);color:var(--screen)}
-.big.go small{color:var(--screen);opacity:.85}
+.big{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;text-align:left;font:600 1rem var(--sans);min-height:56px;padding:11px 16px;border-radius:11px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.big small{display:block;font:400 .8rem var(--sans);color:var(--muted);margin-top:1px}
+.big.go{background:var(--go);border-color:var(--go);color:var(--go-ink)}
+.big[disabled]{opacity:.45;cursor:not-allowed}
 .big:focus-visible,.rail button:focus-visible,.lang button:focus-visible,.reading input:focus-visible{outline:3px solid var(--info);outline-offset:2px}
 .reading{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .reading label{font-size:.88rem;color:var(--muted)}
-.reading input{font:600 1.2rem var(--mono);width:120px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);min-height:52px}
-.ev{display:grid;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:.86rem}
-.ev div{display:grid;grid-template-columns:64px minmax(0,1fr);gap:10px;padding:8px 12px;border-top:1px solid var(--line);background:var(--surface)}
+.reading input{font:600 1.3rem var(--mono);width:110px;padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);min-height:52px}
+/* record */
+.rec{border-left:1px solid var(--line);padding:18px;display:grid;gap:10px;align-content:start}
+.cap{font:500 .68rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ev{display:grid}
+.ev div{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:.84rem}
 .ev div:first-child{border-top:0}
-.ev time{font:500 .78rem var(--mono);color:var(--muted)}
-.side{display:grid;gap:14px}
-.note{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:8px}
-.note .n{font:600 .72rem var(--mono);color:var(--hold);letter-spacing:.06em}
-.note p{font-size:.92rem;color:var(--muted)}
-.note p strong{color:var(--ink);font-weight:600}
-footer{color:var(--muted);font-size:.82rem;max-width:780px;display:grid;gap:4px}
-footer a{color:var(--info)}
-.fade{animation:none}
+.ev time{font:500 .74rem var(--mono);color:var(--muted);padding-top:1px}
+.ev .h{color:var(--hold);font-weight:600}
+.hint{font-size:.8rem;color:var(--muted)}
+/* labels + proof */
+.labels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media(max-width:720px){.labels{grid-template-columns:1fr}}
+.label{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start}
+.n{width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--surface);font:600 .78rem var(--mono);display:grid;place-items:center}
+.label b{display:block;font-size:.98rem}.label div span{color:var(--muted);font-size:.88rem}
+.proof{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center}
+@media(max-width:720px){.proof{grid-template-columns:1fr}}
+.proof b{font-size:.98rem}.proof p{color:var(--muted);font-size:.88rem;margin-top:3px;max-width:62ch}
+.proof a{color:var(--info)}
+.swap{display:flex;align-items:center;gap:10px;font:600 1.3rem var(--mono)}
+.swap s{color:var(--muted);font-weight:500}.swap i{font-style:normal;color:var(--hold)}
+.swap small{display:block;font:500 .66rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+footer{color:var(--muted);font-size:.76rem}
 @media(prefers-reduced-motion:no-preference){
-  .fade{animation:rise .22s cubic-bezier(.2,.7,.2,1) both}
-  @keyframes rise{from{transform:translateY(6px);opacity:.4}to{transform:none;opacity:1}}
-  .hold{animation:pulse 1.4s ease-out 1}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 var(--hold-line)}100%{box-shadow:0 0 0 10px transparent}}
+  .step>*{animation:rise .2s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes rise{from{transform:translateY(5px)}to{transform:none}}
+  .hold{animation:pulse 1.3s ease-out 1}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 var(--hold-line)}100%{box-shadow:0 0 0 12px transparent}}
 }
 </style>
 <style>body{margin:0}</style>
@@ -96,158 +110,144 @@ footer a{color:var(--info)}
 
 
 <div class="wrap">
-  <header>
-    <div class="eyebrow">Concept · step-by-step execution on iPad</div>
-    <h1>The step was written against an older drawing</h1>
-    <p class="lede">A technician is switching a UPS to maintenance bypass, following an AI-written procedure on an iPad. At step 4, where this opens, the site record shows the one-line drawing changed after the procedure was approved: the breaker was relabelled. This sketch shows how the screen stops them, shows exactly what changed, and lets them carry on safely or call the engineer. Tap through it.</p>
+  <header class="head">
+    <div>
+      <div class="eyebrow">Design concept · procedure on iPad</div>
+      <h1>When the drawing changed after the step was written</h1>
+      <p class="sub">The screen stops, shows the change, and records what the technician did.</p>
+    </div>
+    <div class="by">Gaurav Basantani<br><a href="https://gauravbasantani.com">gauravbasantani.com</a></div>
   </header>
 
-  <div class="grid">
-    <div class="tablet">
-      <section class="screen" aria-label="Field procedure screen concept">
-        <div class="top">
-          <span><b>MOP-024</b> · UPS-B to maintenance bypass · Hall 02</span>
-          <span class="lang" role="group" aria-label="Language">
-            <button type="button" data-lang="en" aria-pressed="true">EN</button>
-            <button type="button" data-lang="es" aria-pressed="false">ES</button>
-          </span>
-        </div>
-        <div class="main">
-          <nav class="rail" id="rail" aria-label="Procedure steps"></nav>
-          <div class="step fade" id="step" aria-live="polite"></div>
-        </div>
-      </section>
-    </div>
-
-    <aside class="side" aria-label="Why it works this way">
-      <div class="note">
-        <div class="n">WHERE THIS COMES FROM</div>
-        <h3>The quiet mistakes are the dangerous ones</h3>
-        <p>In Gauravide, a receipt app I designed and directed Claude Code to build, a £20 receipt once reached Splitwise as $20 with no error shown. Nothing looked wrong. <strong>A step that names a breaker from an old drawing looks just as normal.</strong> So the screen checks the source before the step, not after.</p>
+  <div class="tablet">
+    <section class="screen" aria-label="Field procedure screen concept">
+      <div class="top">
+        <span class="t"><b>MOP-024</b> · UPS-B to maintenance bypass · Hall 02</span>
+        <span class="lang" role="group" aria-label="Language">
+          <button type="button" data-lang="en" aria-pressed="true">EN</button>
+          <button type="button" data-lang="es" aria-pressed="false">ES</button>
+        </span>
       </div>
-      <div class="note">
-        <div class="n">1 · STOP ONLY WHEN IT MATTERS</div>
-        <p><strong>Most steps are one instruction and one big button.</strong> The hold point is the only loud thing on the screen, so it can't be confused with a normal step or tapped past.</p>
+      <div class="cols">
+        <nav class="rail" id="rail" aria-label="Procedure steps"></nav>
+        <div class="step" id="step" aria-live="polite"></div>
+        <aside class="rec" aria-label="Record">
+          <span class="cap" id="reccap">Record</span>
+          <div class="ev" id="ev"></div>
+          <span class="hint" id="rechint">Goes to the reviewing engineer as is.</span>
+        </aside>
       </div>
-      <div class="note">
-        <div class="n">2 · SHOW THE CHANGE, NOT A WARNING</div>
-        <p><strong>Rev B next to rev C, the old label struck through.</strong> The technician can match it to what's printed on the panel in front of them, instead of reading a paragraph.</p>
-      </div>
-      <div class="note">
-        <div class="n">3 · EVERY STEP LEAVES EVIDENCE</div>
-        <p><strong>Readings, the label they saw and who they called go into the record with a time.</strong> The reviewing engineer and the auditor read the same list later.</p>
-      </div>
-      <div class="note">
-        <div class="n">4 · SIX LANGUAGES</div>
-        <p><strong>Switch to ES.</strong> Equipment names stay exactly as printed on the equipment, in every language. Only the words around them change.</p>
-      </div>
-    </aside>
+    </section>
   </div>
 
-  <footer>
-    <p>A concept by Gaurav Basantani for the Design Engineer role at Entangl. Not made with Entangl, and it uses no Entangl data, brand or screens. The site, equipment, procedure and people are made up, and the steps are simplified for illustration; they are not a real switching procedure.</p>
-    <p><a href="https://gauravbasantani.com">gauravbasantani.com</a> · <a href="https://gauravide.vercel.app">gauravide.vercel.app</a></p>
-  </footer>
+  <section class="labels" aria-label="Design decisions">
+    <div class="label"><span class="n">1</span><div><b>Stops only when it matters</b><span>Normal steps are one line and one button.</span></div></div>
+    <div class="label"><span class="n">2</span><div><b>Shows the change itself</b><span>Old label next to new. Match it to the panel.</span></div></div>
+    <div class="label"><span class="n">3</span><div><b>Every step leaves a record</b><span>Readings, labels and calls, each with a time.</span></div></div>
+  </section>
+
+  <section class="proof" aria-label="Where this comes from">
+    <div>
+      <b>Quiet mistakes are the dangerous ones.</b>
+      <p>In <a href="https://gauravide.vercel.app">Gauravide</a>, a receipt app I designed and launched, a £20 receipt arrived as $20 with no error. A breaker name from an old drawing looks just as normal.</p>
+    </div>
+    <div class="swap"><span><small>Receipt</small>£20</span><i>→</i><span><small>Arrived as</small><s>$20</s></span></div>
+  </section>
+
+  <footer>Unofficial concept for the Design Engineer role. Not affiliated with Entangl. The site, equipment and people are made up, and the steps are simplified. This is not a real switching procedure.</footer>
 </div>
 
 <script>
 (function(){
   var T={
-    en:{step:"Step",of:"of",why:"Why",done:"Done",next:"Mark done",hold:"Hold point: the drawing changed",
-      holdBody:"This step was written against SLD-001 rev B. The site record is now rev C, approved Nov 3. The breaker you need was relabelled.",
-      inRev:"In the procedure (rev B)",nowRev:"In the site record (rev C)",
-      see:"I see MBB-B on the panel",seeSub:"Carry on with the rev C label. This gets recorded.",
-      call:"Stop and call the reviewing engineer",callSub:"Priya Raman, on shift until 18:00",
-      called:"Called. Waiting for Priya.",calledBody:"The step stays on hold. Priya can approve it from her desk, and you'll see it here.",
-      approve:"Priya approved: use MBB-B",approveSub:"Simulates the engineer's reply",
-      reading:"UPS-B load",unit:"%",record:"Record and continue",limit:"Must be under 80% to continue.",over:"Over 80%. Stop here and call the engineer.",
-      ev:"Recorded so far",finish:"Procedure complete",finishBody:"All 6 steps done. The record below goes to the reviewing engineer as is.",restart:"Start over",
+    en:{step:"Step",of:"of",next:"Mark done",record:"Record and continue",rec:"Record",rechint:"Goes to the reviewing engineer as is.",
+      hold:"Stop. The drawing changed.",holdBody:"This step was written for <b>rev B</b>. The site is now on <b>rev C</b>.",
+      inRev:"Procedure · rev B",nowRev:"Site record · rev C",
+      see:"I see MBB-B on the panel",seeSub:"Continue with the rev C label",
+      call:"Call the reviewing engineer",callSub:"Priya Raman · on shift until 18:00",
+      called:"Waiting for Priya",calledBody:"This step stays on hold until she approves.",
+      approve:"Priya approved: use MBB-B",approveSub:"Simulated reply",
+      reading:"UPS-B load",limit:"Must be under 80%.",overL:"Over 80%. Stop and call the engineer.",
+      finish:"Procedure complete",finishBody:"All 6 steps are done and recorded.",restart:"Start over",
       steps:[
-        {t:"Confirm the work permit and a second person on site",w:"Two-person rule for switching work.",ref:"Permit WP-2291"},
-        {t:"Check UPS-B is on inverter and record its load",w:"Bypass is only safe below 80% load.",ref:"UPS-B panel",input:true},
-        {t:"Confirm the bypass source light is on at <span class='equip'>UPS-B</span>",w:"Without a live bypass source the load would drop.",ref:"UPS-B panel"},
-        {t:"Close the maintenance bypass breaker <span class='equip'>MBB-B</span>",w:"This puts the load on bypass before the UPS output opens.",ref:"SLD-001",check:true},
-        {t:"Open the UPS output breaker <span class='equip'>Q3-B</span>",w:"UPS-B is now isolated from the load.",ref:"SLD-001 rev C"},
-        {t:"Confirm Hall 02 load is on bypass and record the reading",w:"Closes out the switching sequence.",ref:"PDU-B display"}
+        {s:"Permit and second person",t:"Confirm the work permit and a second person on site",w:"Two-person rule for switching.",ref:"WP-2291"},
+        {s:"Record UPS-B load",t:"Check <span class='equip'>UPS-B</span> is on inverter and record its load",w:"Bypass is only safe under 80% load.",ref:"UPS-B panel",input:true},
+        {s:"Bypass source on",t:"Confirm the bypass source light is on at <span class='equip'>UPS-B</span>",w:"No bypass source means the load drops.",ref:"UPS-B panel"},
+        {s:"Close MBB-B",t:"Close the maintenance bypass breaker <span class='equip'>MBB-B</span>",w:"Puts the load on bypass first.",ref:"SLD-001",check:true},
+        {s:"Open Q3-B",t:"Open the UPS output breaker <span class='equip'>Q3-B</span>",w:"Isolates UPS-B from the load.",ref:"SLD-001 rev C"},
+        {s:"Confirm load on bypass",t:"Confirm <span class='equip'>Hall 02</span> is on bypass and record the reading",w:"Closes the switching sequence.",ref:"PDU-B"}
       ]},
-    es:{step:"Paso",of:"de",why:"Por qué",done:"Hecho",next:"Marcar como hecho",hold:"Punto de espera: el plano cambió",
-      holdBody:"Este paso se escribió con SLD-001 rev B. El registro del sitio ahora es rev C, aprobado el 3 de nov. El interruptor que necesitas tiene otra etiqueta.",
-      inRev:"En el procedimiento (rev B)",nowRev:"En el registro del sitio (rev C)",
-      see:"Veo MBB-B en el panel",seeSub:"Continúa con la etiqueta de rev C. Esto queda registrado.",
-      call:"Detente y llama al ingeniero revisor",callSub:"Priya Raman, de turno hasta las 18:00",
-      called:"Llamada hecha. Esperando a Priya.",calledBody:"El paso sigue en espera. Priya puede aprobarlo desde su escritorio y lo verás aquí.",
-      approve:"Priya aprobó: usa MBB-B",approveSub:"Simula la respuesta del ingeniero",
-      reading:"Carga de UPS-B",unit:"%",record:"Registrar y continuar",limit:"Debe ser menor de 80% para continuar.",over:"Más de 80%. Detente y llama al ingeniero.",
-      ev:"Registrado hasta ahora",finish:"Procedimiento completo",finishBody:"Los 6 pasos están hechos. El registro de abajo va tal cual al ingeniero revisor.",restart:"Empezar de nuevo",
+    es:{step:"Paso",of:"de",next:"Marcar hecho",record:"Registrar y continuar",rec:"Registro",rechint:"Va tal cual al ingeniero revisor.",
+      hold:"Alto. El plano cambió.",holdBody:"Este paso se escribió para <b>rev B</b>. El sitio ahora está en <b>rev C</b>.",
+      inRev:"Procedimiento · rev B",nowRev:"Registro del sitio · rev C",
+      see:"Veo MBB-B en el panel",seeSub:"Continuar con la etiqueta de rev C",
+      call:"Llamar al ingeniero revisor",callSub:"Priya Raman · de turno hasta las 18:00",
+      called:"Esperando a Priya",calledBody:"Este paso sigue en espera hasta que ella apruebe.",
+      approve:"Priya aprobó: usa MBB-B",approveSub:"Respuesta simulada",
+      reading:"Carga de UPS-B",limit:"Debe ser menor de 80%.",overL:"Más de 80%. Detente y llama al ingeniero.",
+      finish:"Procedimiento completo",finishBody:"Los 6 pasos están hechos y registrados.",restart:"Empezar de nuevo",
       steps:[
-        {t:"Confirma el permiso de trabajo y una segunda persona en el sitio",w:"Regla de dos personas para maniobras.",ref:"Permiso WP-2291"},
-        {t:"Comprueba que UPS-B está en inversor y registra su carga",w:"El bypass solo es seguro con menos de 80% de carga.",ref:"Panel UPS-B",input:true},
-        {t:"Confirma que la luz de fuente de bypass está encendida en <span class='equip'>UPS-B</span>",w:"Sin fuente de bypass, la carga se caería.",ref:"Panel UPS-B"},
-        {t:"Cierra el interruptor de bypass de mantenimiento <span class='equip'>MBB-B</span>",w:"Pasa la carga a bypass antes de abrir la salida del UPS.",ref:"SLD-001",check:true},
-        {t:"Abre el interruptor de salida del UPS <span class='equip'>Q3-B</span>",w:"UPS-B queda aislado de la carga.",ref:"SLD-001 rev C"},
-        {t:"Confirma que la carga de Hall 02 está en bypass y registra la lectura",w:"Cierra la secuencia de maniobra.",ref:"Pantalla PDU-B"}
+        {s:"Permiso y segunda persona",t:"Confirma el permiso de trabajo y una segunda persona en el sitio",w:"Regla de dos personas para maniobras.",ref:"WP-2291"},
+        {s:"Registrar carga de UPS-B",t:"Comprueba que <span class='equip'>UPS-B</span> está en inversor y registra su carga",w:"El bypass solo es seguro con menos de 80%.",ref:"Panel UPS-B",input:true},
+        {s:"Fuente de bypass activa",t:"Confirma que la luz de fuente de bypass está encendida en <span class='equip'>UPS-B</span>",w:"Sin fuente de bypass, la carga se cae.",ref:"Panel UPS-B"},
+        {s:"Cerrar MBB-B",t:"Cierra el interruptor de bypass de mantenimiento <span class='equip'>MBB-B</span>",w:"Pasa la carga a bypass primero.",ref:"SLD-001",check:true},
+        {s:"Abrir Q3-B",t:"Abre el interruptor de salida del UPS <span class='equip'>Q3-B</span>",w:"Aísla UPS-B de la carga.",ref:"SLD-001 rev C"},
+        {s:"Confirmar carga en bypass",t:"Confirma que <span class='equip'>Hall 02</span> está en bypass y registra la lectura",w:"Cierra la secuencia de maniobra.",ref:"PDU-B"}
       ]}
   };
-  function opened(lang){return {lang:lang,i:3,done:[0,1,2],hold:"open",load:"62",ev:[["14:05","Permit WP-2291 confirmed, second person: J. Ortiz"],["14:08","UPS-B on inverter, load 62%"],["14:11","Bypass source light on at UPS-B"]]}}
+  function opened(lang){return {lang:lang,i:3,done:[0,1,2],hold:"open",load:"62",ev:[["14:05","WP-2291 · J. Ortiz on site"],["14:08","UPS-B load 62%"],["14:11","Bypass source on"]]}}
   var st=opened("en"), clock=[14,11];
-  var rail=document.getElementById("rail"), box=document.getElementById("step");
+  var rail=document.getElementById("rail"), box=document.getElementById("step"), evb=document.getElementById("ev");
   function now(){clock[1]+=3; if(clock[1]>=60){clock[0]++;clock[1]-=60} return String(clock[0]).padStart(2,"0")+":"+String(clock[1]).padStart(2,"0")}
-  function plain(s){return s.replace(/<[^>]+>/g,"")}
-  function log(m){st.ev.push([now(),m])}
+  function log(m,h){st.ev.push([now(),m,h])}
   function L(){return T[st.lang]}
+  var ES=[[/J\. Ortiz on site/,"J. Ortiz en el sitio"],[/UPS-B load/,"Carga de UPS-B"],[/Bypass source on/,"Fuente de bypass activa"],[/Saw MBB-B on panel/,"Vio MBB-B en el panel"],[/Held\. Called/,"En espera. Llamó a"],[/Priya approved rev C label/,"Priya aprobó la etiqueta rev C"],[/MBB-B closed/,"MBB-B cerrado"],[/Q3-B opened/,"Q3-B abierto"],[/Hall 02 on bypass/,"Hall 02 en bypass"]];
+  function tr(m){if(st.lang!=="es")return m; ES.forEach(function(p){m=m.replace(p[0],p[1])}); return m}
   function render(){
     var t=L(), n=t.steps.length;
     document.querySelectorAll("[data-lang]").forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.lang===st.lang))});
+    document.getElementById("reccap").textContent=t.rec; document.getElementById("rechint").textContent=t.rechint;
     rail.innerHTML=t.steps.map(function(s,k){
-      var cls=st.done.indexOf(k)>-1?"done":(k===3&&st.i===3&&st.hold!=="clear"?"held":"");
-      return '<button type="button" class="'+cls+'" data-jump="'+k+'"'+(k===st.i?' aria-current="step"':'')+'><span class="num">'+(st.done.indexOf(k)>-1?"✓":k+1)+'</span><span>'+plain(s.t)+'</span></button>';
+      var d=st.done.indexOf(k)>-1, cls=d?"done":(k===3&&st.i===3&&st.hold!=="clear"?"held":"");
+      return '<button type="button" class="'+cls+'" data-jump="'+k+'"'+(k===st.i?' aria-current="step"':'')+'><span class="num">'+(d?"✓":k+1)+'</span><span>'+s.s+'</span></button>';
     }).join("");
     var h="";
     if(st.i>=n){
-      h+='<div class="meta"><span class="tag">MOP-024</span></div><div class="instr">'+t.finish+'</div><p class="why">'+t.finishBody+'</p>';
-      h+=evList(t)+'<div class="choices"><button type="button" class="big" data-restart="1">'+t.restart+'</button></div>';
+      h+='<div class="meta"><span class="tag">MOP-024</span></div><div class="instr">'+t.finish+'</div><p class="why">'+t.finishBody+'</p><div class="choices"><button type="button" class="big" data-restart="1">'+t.restart+'</button></div>';
     }else{
       var s=t.steps[st.i];
       h+='<div class="meta"><span class="tag">'+t.step+' '+(st.i+1)+' '+t.of+' '+n+'</span><span class="tag">'+s.ref+'</span></div>';
-      h+='<div class="instr">'+s.t+'</div><p class="why"><b>'+t.why+':</b> '+s.w+'</p>';
+      h+='<div class="instr">'+s.t+'</div><p class="why">'+s.w+'</p>';
       if(s.check&&st.hold!=="clear"){
         h+='<div class="hold" role="alert"><h3>'+t.hold+'</h3><p>'+t.holdBody+'</p>'+
-          '<div class="diff"><div class="rev"><small>'+t.inRev+'</small><s>Q4</s> · Maint. bypass</div><span class="arrow" aria-hidden="true">→</span><div class="rev"><small>'+t.nowRev+'</small><b>MBB-B</b> · Maint. bypass</div></div>';
-        if(st.hold==="open"){
-          h+='<div class="choices"><button type="button" class="big" data-see="1"><span>'+t.see+'<small>'+t.seeSub+'</small></span><span aria-hidden="true">→</span></button>'+
-             '<button type="button" class="big" data-call="1"><span>'+t.call+'<small>'+t.callSub+'</small></span><span aria-hidden="true">☎</span></button></div>';
-        }else{
-          h+='<p><b>'+t.called+'</b> '+t.calledBody+'</p><div class="choices"><button type="button" class="big" data-approve="1"><span>'+t.approve+'<small>'+t.approveSub+'</small></span><span aria-hidden="true">✓</span></button></div>';
-        }
+          '<div class="diff"><div class="rev"><small>'+t.inRev+'</small><s>Q4</s></div><span class="arrow" aria-hidden="true">→</span><div class="rev new"><small>'+t.nowRev+'</small><b>MBB-B</b></div></div>';
+        if(st.hold==="open")h+='<div class="choices"><button type="button" class="big" data-see="1"><span>'+t.see+'<small>'+t.seeSub+'</small></span><span aria-hidden="true">→</span></button><button type="button" class="big" data-call="1"><span>'+t.call+'<small>'+t.callSub+'</small></span><span aria-hidden="true">☎</span></button></div>';
+        else h+='<p><b>'+t.called+'.</b> '+t.calledBody+'</p><div class="choices"><button type="button" class="big" data-approve="1"><span>'+t.approve+'<small>'+t.approveSub+'</small></span><span aria-hidden="true">✓</span></button></div>';
         h+='</div>';
       }else if(s.input){
-        var v=parseFloat(st.load), bad=!(v<80);
-        h+='<div class="reading"><label for="load">'+t.reading+'</label><input id="load" inputmode="decimal" value="'+st.load+'" aria-describedby="loadhint"><span class="why">'+t.unit+'</span></div>';
-        h+='<p class="why" id="loadhint" style="color:'+(bad?'var(--hold)':'var(--muted)')+'">'+(bad?t.over:t.limit)+'</p>';
-        h+='<div class="choices"><button type="button" class="big go" data-next="1"'+(bad?' disabled style="opacity:.45;cursor:not-allowed"':'')+'><span>'+t.record+'</span><span aria-hidden="true">→</span></button></div>';
-      }else{
-        h+='<div class="choices"><button type="button" class="big go" data-next="1"><span>'+t.next+'</span><span aria-hidden="true">→</span></button></div>';
-      }
-      if(st.ev.length)h+=evList(t);
+        var bad=!(parseFloat(st.load)<80);
+        h+='<div class="reading"><label for="load">'+t.reading+'</label><input id="load" inputmode="decimal" value="'+st.load+'" aria-describedby="loadhint"><span class="why">%</span></div>';
+        h+='<p class="why" id="loadhint"'+(bad?' style="color:var(--hold)"':'')+'>'+(bad?t.overL:t.limit)+'</p>';
+        h+='<div class="choices"><button type="button" class="big go" data-next="1"'+(bad?' disabled':'')+'><span>'+t.record+'</span><span aria-hidden="true">→</span></button></div>';
+      }else h+='<div class="choices"><button type="button" class="big go" data-next="1"><span>'+t.next+'</span><span aria-hidden="true">→</span></button></div>';
     }
-    box.innerHTML=h; box.classList.remove("fade"); void box.offsetWidth; box.classList.add("fade");
+    box.innerHTML=h;
+    evb.innerHTML=st.ev.map(function(e){return '<div><time>'+e[0]+'</time><span'+(e[2]?' class="h"':'')+'>'+tr(e[1])+'</span></div>'}).join("");
     var inp=document.getElementById("load");
-    if(inp)inp.addEventListener("input",function(){st.load=inp.value; var b=box.querySelector("[data-next]"), bad=!(parseFloat(inp.value)<80); b.disabled=bad; b.style.opacity=bad?".45":""; b.style.cursor=bad?"not-allowed":""; var hint=document.getElementById("loadhint"); hint.textContent=bad?L().over:L().limit; hint.style.color=bad?"var(--hold)":"var(--muted)";});
+    if(inp)inp.addEventListener("input",function(){st.load=inp.value; var b=box.querySelector("[data-next]"), bad=!(parseFloat(inp.value)<80); b.disabled=bad; var hint=document.getElementById("loadhint"); hint.textContent=bad?L().overL:L().limit; hint.style.color=bad?"var(--hold)":""});
   }
-  function evList(t){return '<div><p class="why" style="margin-bottom:6px"><b>'+t.ev+'</b></p><div class="ev">'+st.ev.map(function(e){return '<div><time>'+e[0]+'</time><span>'+e[1]+'</span></div>'}).join("")+'</div></div>'}
-  function complete(msg){ if(st.done.indexOf(st.i)<0)st.done.push(st.i); log(msg); st.i++; }
+  function complete(m,h){ if(st.done.indexOf(st.i)<0)st.done.push(st.i); log(m,h); st.i++ }
   document.addEventListener("click",function(e){
     var b=e.target.closest("button"); if(!b||b.disabled)return;
-    var s=L().steps[st.i];
     if(b.dataset.lang){st.lang=b.dataset.lang}
     else if(b.dataset.jump){var k=+b.dataset.jump; if(k<=Math.max.apply(null,st.done.concat([-1]))+1)st.i=k}
     else if(b.dataset.next){
-      var msgs=["Permit WP-2291 confirmed, second person: J. Ortiz","UPS-B on inverter, load "+st.load+"%","Bypass source light on at UPS-B","","Q3-B opened, UPS-B isolated","Hall 02 on bypass, PDU-B reading recorded"];
-      complete(msgs[st.i]||plain(s.t));
+      var msgs=["WP-2291 · J. Ortiz on site","UPS-B load "+st.load+"%","Bypass source on","MBB-B closed","Q3-B opened","Hall 02 on bypass"];
+      complete(msgs[st.i]);
     }
-    else if(b.dataset.see){st.hold="clear"; complete("Hold point: technician saw MBB-B on the panel (rev C). MBB-B closed")}
-    else if(b.dataset.call){st.hold="called"; log("Hold point: technician stopped and called Priya Raman")}
-    else if(b.dataset.approve){st.hold="clear"; complete("Priya Raman approved rev C label. MBB-B closed")}
+    else if(b.dataset.see){st.hold="clear"; log("Saw MBB-B on panel (rev C)",true); complete("MBB-B closed")}
+    else if(b.dataset.call){st.hold="called"; log("Held. Called Priya Raman",true)}
+    else if(b.dataset.approve){st.hold="clear"; log("Priya approved rev C label",true); complete("MBB-B closed")}
     else if(b.dataset.restart){st=opened(st.lang); clock=[14,11]}
     render();
   });
